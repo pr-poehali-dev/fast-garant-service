@@ -2,9 +2,46 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Icon from "@/components/ui/icon";
+import { useState } from "react";
 
 const Index = () => {
+  const [dealAmount, setDealAmount] = useState<number>(1000000);
+  const [dealType, setDealType] = useState<string>("real-estate");
+  const [applicationForm, setApplicationForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    city: "",
+    employment: "",
+    experience: ""
+  });
+
+  const calculateFee = () => {
+    const baseRates: { [key: string]: number } = {
+      "real-estate": 0.015,
+      "business": 0.02,
+      "vehicle": 0.025,
+      "documents": 0.03
+    };
+    
+    const rate = baseRates[dealType] || 0.02;
+    const fee = dealAmount * rate;
+    const minFee = 5000;
+    
+    return Math.max(fee, minFee);
+  };
+
+  const handleApplicationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("Заявка отправлена! Наш специалист свяжется с вами в течение часа.");
+  };
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -13,13 +50,17 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Icon name="Shield" className="text-primary" size={32} />
-              <span className="text-2xl font-bold text-primary">ФастГарант</span>
+              <div>
+                <span className="text-2xl font-bold text-primary">ФастГарант</span>
+                <p className="text-xs text-muted-foreground">подразделение ООО "Финанс Бизнес Консалт"</p>
+              </div>
             </div>
             <nav className="hidden md:flex space-x-8">
               <a href="#services" className="text-muted-foreground hover:text-primary transition-colors">Услуги</a>
+              <a href="#how-it-works" className="text-muted-foreground hover:text-primary transition-colors">Как работаем</a>
+              <a href="#calculator" className="text-muted-foreground hover:text-primary transition-colors">Калькулятор</a>
               <a href="#career" className="text-muted-foreground hover:text-primary transition-colors">Карьера</a>
-              <a href="#faq" className="text-muted-foreground hover:text-primary transition-colors">FAQ</a>
-              <a href="#contacts" className="text-muted-foreground hover:text-primary transition-colors">Контакты</a>
+              <a href="#documents" className="text-muted-foreground hover:text-primary transition-colors">Документы</a>
             </nav>
           </div>
         </div>
@@ -36,22 +77,78 @@ const Index = () => {
               Мы — сервис безопасных сделок, который выступает в роли третьей стороны между покупателем и продавцом, 
               обеспечивая полную защиту обеих сторон на всех этапах.
             </p>
-            <Button size="lg" className="mr-4">
-              Начать сделку
-            </Button>
-            <Button variant="outline" size="lg">
-              Узнать больше
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="text-lg px-8">
+                Начать сделку
+              </Button>
+              <Button variant="outline" size="lg" className="text-lg px-8">
+                Узнать больше
+              </Button>
+            </div>
+            
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">15M+</div>
+                <div className="text-sm text-muted-foreground">рублей в сделках</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">500+</div>
+                <div className="text-sm text-muted-foreground">успешных сделок</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">0</div>
+                <div className="text-sm text-muted-foreground">потерянных средств</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits */}
-      <section id="services" className="py-20">
+      {/* How It Works */}
+      <section id="how-it-works" className="py-20">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Сотрудничая с нами, вы получаете
+              Как работает эскроу-сервис
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Простая и надежная схема для безопасных сделок любого масштаба
+            </p>
+          </div>
+          
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">1</div>
+                <h3 className="font-semibold text-lg mb-2">Заявка</h3>
+                <p className="text-muted-foreground">Покупатель подает заявку на эскроу-сделку</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">2</div>
+                <h3 className="font-semibold text-lg mb-2">Депозит</h3>
+                <p className="text-muted-foreground">Средства поступают на защищенный счет эскроу</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">3</div>
+                <h3 className="font-semibold text-lg mb-2">Проверка</h3>
+                <p className="text-muted-foreground">Проверяем выполнение всех условий сделки</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">4</div>
+                <h3 className="font-semibold text-lg mb-2">Передача</h3>
+                <p className="text-muted-foreground">Безопасная передача средств продавцу</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services */}
+      <section id="services" className="py-20 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Наши гарантии и услуги
             </h2>
           </div>
           
@@ -62,7 +159,7 @@ const Index = () => {
                 <CardTitle>Полный контроль</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Полный контроль над сделкой на каждом этапе</p>
+                <p className="text-muted-foreground">Полный контроль над сделкой на каждом этапе с подробной отчетностью</p>
               </CardContent>
             </Card>
             
@@ -72,7 +169,7 @@ const Index = () => {
                 <CardTitle>Защита от мошенничества</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Надежная защита от любых видов мошенничества</p>
+                <p className="text-muted-foreground">Многоуровневая система защиты и проверки всех участников сделки</p>
               </CardContent>
             </Card>
             
@@ -82,7 +179,7 @@ const Index = () => {
                 <CardTitle>Сохранность активов</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Сохранность активов до выполнения всех условий</p>
+                <p className="text-muted-foreground">Сохранность активов до выполнения всех условий в специализированном банке</p>
               </CardContent>
             </Card>
           </div>
